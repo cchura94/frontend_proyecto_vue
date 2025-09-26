@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import Prueba from './views/Prueba.vue';
 
   const titulo = ref<string>('Proyecto de VUE con Typescript');
 
@@ -7,6 +8,7 @@ import { ref } from 'vue';
 
 <template>
   <h1>{{ titulo }}</h1>
+  <Prueba></Prueba>
 
 </template>
 
