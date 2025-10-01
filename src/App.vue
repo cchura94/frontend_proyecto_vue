@@ -1,19 +1,17 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import Prueba from './views/Prueba.vue';
-
-  const titulo = ref<string>('Proyecto de VUE con Typescript');
 
 </script>
 
 <template>
-  <h1>{{ titulo }}</h1>
-  <Prueba></Prueba>
+    <h1>App.vue</h1>
+
+    <nav>
+      <RouterLink to="/">INICIO</RouterLink> |
+      <RouterLink to="/nosotros">Acerca de Nosotros</RouterLink> |
+      <RouterLink to="/servicios">Nuestros Servicios</RouterLink>
+    </nav>
+
+    <RouterView />
 
 </template>
 
-<style scoped>
-  h1{
-    color: #0000FF;
-  }
-</style>
