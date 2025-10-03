@@ -54,6 +54,7 @@ async function funLogin() {
     const res = await loginApiBackend(credenciales.value);
     console.log(res);
     respuesta.value = res;
+    localStorage.setItem("access_token", res.access_token);
   
     router.push("/admin/usuario")
     

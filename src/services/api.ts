@@ -8,7 +8,27 @@ const intance = axios.create({
 });
 
 // interceptores ... (CLIENTE - header (TOKENS))
+intance.interceptors.request.use((config) => {
+    const token = localStorage.getItem("access_token");
+    if(token){
+        config.headers.Authorization = `Bearer ${token}`
+    }
+    return config;
+})
 
 // interceptores ... (SERVIDOR - errores)
+intance.interceptors.response.use(
+    (respuesta) => {
+        return respuesta;
+    },
+    (error) => {
+        if(error.response?.status === 401){
+            localStorage.removeItem("access_token");
+            location.href = "/auth/login";
+        }
+        return Promise.reject(error);
+    }
+)
+
 
 export default intance;
