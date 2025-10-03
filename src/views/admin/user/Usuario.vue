@@ -1,5 +1,26 @@
 <template>
     <h1>Usuarios</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>NOMBRE</th>
+                <th>CORREO ELECTRONICO</th>
+                <th>ESTADO</th>
+                <th>ACCIONES</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="us in usuarios">
+                <td>{{ us['name'] }}</td>
+                <td>{{ us['email'] }}</td>
+                <td>{{ us['estado'] }}</td>
+                <td>
+                    <button>editar</button>
+                    <button>eliminar</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
     <pre>{{ usuarios }}</pre>
 </template>
 
