@@ -99,6 +99,7 @@ async function guardarUsuario(){
         if(usuario.value.id){
             const {id, estado, roles, ...rest} = usuario.value;
             const {data} = await userService.modificarApiUsuario(id, rest);
+            console.log(data)
             obtenerUsuarios()
             openModal.value = false;
             usuario.value = {id: '', email: '', name: '', password: '', estado: true, roles: []}
@@ -106,6 +107,7 @@ async function guardarUsuario(){
             const {id, ...rest} = usuario.value;
 
             const {data} = await userService.guardarApiUsuario(rest);
+            console.log(data)
             obtenerUsuarios()
             openModal.value = false;
             usuario.value = {id: '', email: '', name: '', password: '', estado: true, roles: []}

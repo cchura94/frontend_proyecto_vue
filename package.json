@@ -2,13 +2,17 @@
   "name": "frontend_proyecto_vue",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@primeuix/themes": "^1.0.0",
+    "chart.js": "3.3.2",
+    "primeicons": "^7.0.0",
+    "primevue": "^4.3.1",
+    "tailwindcss-primeui": "^0.5.0",
     "axios": "^1.12.2",
     "vue": "^3.5.21",
     "vue-router": "^4.5.1"
@@ -18,6 +22,12 @@
     "@vue/tsconfig": "^0.8.1",
     "typescript": "~5.8.3",
     "vite": "^7.1.7",
-    "vue-tsc": "^3.0.7"
+    "vue-tsc": "^3.0.7",
+    "@primevue/auto-import-resolver": "^4.3.1",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.40",
+    "sass": "^1.55.0",
+    "tailwindcss": "^3.4.6",
+    "unplugin-vue-components": "^0.27.3"
   }
 }
