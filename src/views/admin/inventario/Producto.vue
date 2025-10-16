@@ -14,9 +14,13 @@
             <DataTable
                 ref="dt"
                 :value="productos"
+                lazy
+                :loading="cargando"
+                :totalRecords="totalRecords"
                 dataKey="id"
                 :paginator="true"
-                :rows="10"
+                :rows="5"
+                @page="onPage($event)"
                 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 :rowsPerPageOptions="[5, 10, 25]"
                 currentPageReportTemplate="Mostrando {first} al {last} de {totalRecords} productos"
@@ -28,7 +32,7 @@
                             <InputIcon>
                                 <i class="pi pi-search" />
                             </InputIcon>
-                            <InputText placeholder="Buscar..." />
+                            <InputText placeholder="Buscar..." v-model="buscar" @keyup.enter="getProductos()" />
                         </IconField>
                     </div>
                 </template>
@@ -57,6 +61,51 @@
                     </template>
                 </Column>
             </DataTable>
+
+
+            <Dialog v-model:visible="productDialog" :style="{ width: '450px' }" header="Detalle de Producto" :modal="true">
+                <div class="flex flex-col gap-6">
+                    <pre>{{ product }}</pre>
+                    <div>
+                        <label for="name" class="block font-bold mb-3">Nombre</label>
+                        <InputText id="name" v-model.trim="product.nombre" required="true" autofocus :invalid="submitted && !product.nombre" fluid />
+                        <small v-if="submitted && !product.nombre" class="text-red-500">Nombre es Obligatorio.</small>
+                    </div>
+                    <div>
+                        <label for="description" class="block font-bold mb-3">Descripción</label>
+                        <Textarea id="description" v-model="product.descripcion" required="false" rows="3" cols="20" fluid />
+                    </div>
+
+                    <div>
+                        <span class="block font-bold mb-4">Categoria</span>
+                        <div class="grid grid-cols-12 gap-4">
+                           
+                            <div class="flex items-center gap-2 col-span-6" v-for="cat in categorias">
+                               
+                                <RadioButton :id="`category${cat.id}`" v-model="product.categoria" name="category" :value="cat['id']" />
+                                <label :for="`category${cat.id}`">{{cat['nombre']}}</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-12 gap-4">
+                        <div class="col-span-6">
+                            <label for="price" class="block font-bold mb-3">Precio Venta Actual</label>
+                            <InputNumber id="price" v-model="product.precio_venta_actual" mode="currency" currency="USD" locale="en-US" fluid />
+                        </div>
+                        <div class="col-span-6">
+                            <label for="marca" class="block font-bold mb-3">Marca</label>
+                            <InputText id="marca" v-model="product.marca" integeronly fluid />
+                        </div>
+                    </div>
+                </div>
+
+                <template #footer>
+                    <Button label="Cancel" icon="pi pi-times" text @click="hideDialog()" />
+                    <Button label="Save" icon="pi pi-check" @click="guardarProducto()" />
+                </template>
+            </Dialog>
+
         
         </div>
     </div>
@@ -65,21 +114,51 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import * as productoService from "./../../../services/producto.service"
+import * as categoriaService from "./../../../services/categoria.service"
+import type CategoriaInterface from '../../../interfaces/CategoriaInterface';
 
 
     const dt = ref();
     const productos = ref([]);
-    const product = ref({});
+    const product = ref({nombre: '', descripcion: '', precio_venta_actual: "0", marca: '', unidad_medida: 'UNIDAD', estado: true, categoria: 0});
     const productDialog = ref(false);
     const deleteProductDialog = ref(false);
+    const cargando = ref(false);
+    const totalRecords = ref(0);
+    const lazyParams = ref({page: 0, rows: 5})
+    const buscar = ref("");
+    const almacen = ref(0);
+
+    const categorias = ref<CategoriaInterface[]>([]);
+
+
+    const submitted = ref(true)
 
     onMounted(() => {
-        getProductos()
+        getProductos();
+        getCategorias();
     })
 
+    const onPage = (event: any) => {
+        console.log(event);
+
+        lazyParams.value = event;
+        getProductos();
+    }
+
     const getProductos = async () => {
-        const {data} = await productoService.listar();
+        cargando.value = true;
+
+        const {data} = await productoService.listar(lazyParams.value.page + 1, lazyParams.value.rows, buscar.value, 'id', 'DESC', almacen.value);
         productos.value = data.data
+        totalRecords.value = data.total;
+
+        cargando.value = false;
+    }
+
+    const getCategorias =  async () => {
+        const {data} = await categoriaService.listar();
+        categorias.value = data  
     }
 
     const exportCSV = () => {
@@ -87,7 +166,7 @@ import * as productoService from "./../../../services/producto.service"
     };
 
     const openNew = () => {
-
+        productDialog.value = true
     }
 
     const formatCurrency = (value: any) => {
@@ -105,6 +184,25 @@ import * as productoService from "./../../../services/producto.service"
         deleteProductDialog.value = true;
     };
 
+    const hideDialog = () => {
+
+    }
+
+    const guardarProducto = async () => {
+        try {
+            product.value.precio_venta_actual = product.value.precio_venta_actual + ""
+            const {data} = await productoService.guardar(product.value);
+            console.log(data);
+            getProductos();
+            productDialog.value = false;
+    
+            product.value = {nombre: '', descripcion: '', precio_venta_actual: "0", marca: '', unidad_medida: 'UNIDAD', estado: true, categoria:0 }
+        } catch (error) {
+            console.log("ERROR: ", error);
+        }
+    }
+
+
     const getStatusLabel = (status: any) => {
         switch (status) {
             case true:
@@ -117,4 +215,5 @@ import * as productoService from "./../../../services/producto.service"
                 return 'danger';
         }
     };
+    
 </script>
