@@ -24,30 +24,36 @@ const routes = [
             {
                 path: "/auth/login",
                 component: Login,
-                name: 'Login'
+                name: 'Login',
+                meta: {redirectIfAuth: true}
             },
         ]
     },
     {
         path: '/admin',
         component: AppLayout,
+        meta: { requireAuth: true },
         children: [
             {
                 path: 'perfil',
-                component: Perfil
+                component: Perfil,
+                meta: { requireAuth: true },
             },
             {
                 path: 'usuario',
-                component: Usuario
+                component: Usuario,
+                name: 'Usuario',
+                meta: { requireAuth: true },
             },
             {
                 path: 'inventario',
                 component: Inventario,
+                meta: { requireAuth: true },
                 children: [
-                    { path: 'categoria', component: Categoria },
-                    { path: 'producto', component: Producto },
-                    { path: 'sucursal', component: Sucursal },
-                    { path: 'almacen', component: Almacen },
+                    { path: 'categoria', component: Categoria, meta: { requireAuth: true }, },
+                    { path: 'producto', component: Producto, meta: { requireAuth: true }, },
+                    { path: 'sucursal', component: Sucursal, meta: { requireAuth: true }, },
+                    { path: 'almacen', component: Almacen, meta: { requireAuth: true }, },
                 ]
             }
         ]
@@ -57,4 +63,24 @@ const routes = [
 export const router = createRouter({
     history: createWebHistory(),
     routes
+});
+
+// Guards
+
+router.beforeEach((to, from, next) => {
+
+    const token = localStorage.getItem("access_token");
+
+    if(to.meta.requireAuth){
+        if(!token){
+            return next({name: 'Login'})
+        }
+        return next();
+    }
+
+    if(to.meta.redirectIfAuth && token){
+        return next({name: 'Usuario'})
+    }
+
+    return next();
 });

@@ -1,8 +1,17 @@
 <script setup lang="ts">
 import { useLayout } from './composables/layout.ts';
 import AppConfigurator from './AppConfigurator.vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter()
 
 const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
+
+const funSalir = () => {
+    localStorage.removeItem("access_token");
+
+    router.push({name: 'Login'});
+}
 </script>
 
 <template>
@@ -64,9 +73,9 @@ const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
                         <i class="pi pi-calendar"></i>
                         <span>Calendar</span>
                     </button>
-                    <button type="button" class="layout-topbar-action">
-                        <i class="pi pi-inbox"></i>
-                        <span>Messages</span>
+                    <button type="button" class="layout-topbar-action" @click="funSalir()">
+                        <i class="pi pi-power-off"></i>
+                        <span>Salir</span>
                     </button>
                     <button type="button" class="layout-topbar-action">
                         <i class="pi pi-user"></i>
