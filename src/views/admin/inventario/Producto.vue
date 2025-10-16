@@ -41,7 +41,10 @@
                 <Column field="nombre" header="NOMBRE" sortable style="min-width: 8rem"></Column>
                 <Column header="Imagen">
                     <template #body="slotProps">
-                        <img :src="`https://primefaces.org/cdn/primevue/images/product/${slotProps.data.imagen}`" :alt="slotProps.data.imagen" class="rounded" style="width: 64px" />
+                        <Image v-if="slotProps.data.imagen" :src="`http://127.0.0.1:3000/${slotProps.data.imagen}`" :alt="slotProps.data.imagen" width="70" preview />
+                       <!--
+                        <img v-if="slotProps.data.imagen" :src="`http://127.0.0.1:3000/${slotProps.data.imagen}`" :alt="slotProps.data.imagen" class="rounded" style="width: 64px" />
+                    -->
                     </template>
                 </Column>
                 <Column field="precio_venta_actual" header="precio_venta_actual" sortable style="min-width: 8rem">
@@ -56,6 +59,7 @@
                 </Column>
                 <Column :exportable="false" style="min-width: 12rem">
                     <template #body="slotProps">
+                        <Button icon="pi pi-image" class="mr-2" @click="editDialogProductoImagen(slotProps.data)" />
                         <Button icon="pi pi-pencil" variant="outlined" rounded class="mr-2" @click="editProduct(slotProps.data)" />
                         <Button icon="pi pi-trash" variant="outlined" rounded severity="danger" @click="confirmDeleteProduct(slotProps.data)" />
                     </template>
@@ -106,6 +110,23 @@
                 </template>
             </Dialog>
 
+            <Dialog v-model:visible="productDialogImagen" :style="{ width: '450px' }" header="Actualizar Imagen" :modal="true">
+                <div class="flex flex-col gap-6">
+                    <div>
+                        <FileUpload customUpload name="demo[]" @uploader="subirImagenProducto" :multiple="false" accept="image/*" :maxFileSize="1000000">
+                            <template #empty>
+                                <span>Arrastrar y soltar para actualizar la imagen.</span>
+                            </template>
+                        </FileUpload>
+
+                    </div>
+                </div>
+
+                <template #footer>
+                    <Button label="Cancel" icon="pi pi-times" text @click="productDialogImagen=false" />
+                </template>
+            </Dialog>
+
         
         </div>
     </div>
@@ -120,7 +141,7 @@ import type CategoriaInterface from '../../../interfaces/CategoriaInterface';
 
     const dt = ref();
     const productos = ref([]);
-    const product = ref({nombre: '', descripcion: '', precio_venta_actual: "0", marca: '', unidad_medida: 'UNIDAD', estado: true, categoria: 0});
+    const product = ref({id: 0, nombre: '', descripcion: '', precio_venta_actual: "0", marca: '', unidad_medida: 'UNIDAD', estado: true, categoria: 0});
     const productDialog = ref(false);
     const deleteProductDialog = ref(false);
     const cargando = ref(false);
@@ -128,6 +149,7 @@ import type CategoriaInterface from '../../../interfaces/CategoriaInterface';
     const lazyParams = ref({page: 0, rows: 5})
     const buscar = ref("");
     const almacen = ref(0);
+    const productDialogImagen = ref(false)
 
     const categorias = ref<CategoriaInterface[]>([]);
 
@@ -167,6 +189,23 @@ import type CategoriaInterface from '../../../interfaces/CategoriaInterface';
 
     const openNew = () => {
         productDialog.value = true
+    }
+
+    const editDialogProductoImagen = (prod: any) => {
+        productDialogImagen.value = true;
+        product.value = prod;
+    }
+
+    const subirImagenProducto = async (event: any) => {
+        let formData = new FormData();
+        formData.append("imagen", event.files[0]);
+
+        await productoService.actualizarImagen(product.value.id, formData);
+
+        getProductos();
+
+        productDialogImagen.value = false;
+
     }
 
     const formatCurrency = (value: any) => {

@@ -19,3 +19,7 @@ export async function modificar(id: number, datos: any){
 export async function eliminar(id: number){
     return await api.delete(`/producto/${id}`);
 }
+
+export async function actualizarImagen(id: number, formData: any){
+    return await api.post(`/producto/${id}/actualizar-imagen`, formData);
+}
