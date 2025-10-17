@@ -95,7 +95,7 @@
                     <div class="grid grid-cols-12 gap-4">
                         <div class="col-span-6">
                             <label for="price" class="block font-bold mb-3">Precio Venta Actual</label>
-                            <InputNumber id="price" v-model="product.precio_venta_actual" mode="currency" currency="USD" locale="en-US" fluid />
+                            <InputText id="price" v-model="product.precio_venta_actual" mode="currency" currency="USD" locale="en-US" fluid />
                         </div>
                         <div class="col-span-6">
                             <label for="marca" class="block font-bold mb-3">Marca</label>
@@ -137,6 +137,7 @@ import { onMounted, ref } from 'vue';
 import * as productoService from "./../../../services/producto.service"
 import * as categoriaService from "./../../../services/categoria.service"
 import type CategoriaInterface from '../../../interfaces/CategoriaInterface';
+import { InputText } from 'primevue';
 
 
     const dt = ref();
@@ -229,13 +230,14 @@ import type CategoriaInterface from '../../../interfaces/CategoriaInterface';
 
     const guardarProducto = async () => {
         try {
-            product.value.precio_venta_actual = product.value.precio_venta_actual + ""
-            const {data} = await productoService.guardar(product.value);
+            product.value.precio_venta_actual = product.value.precio_venta_actual + "";
+            const {id, ...resto_datos} = product.value;
+            const {data} = await productoService.guardar(resto_datos);
             console.log(data);
             getProductos();
             productDialog.value = false;
     
-            product.value = {nombre: '', descripcion: '', precio_venta_actual: "0", marca: '', unidad_medida: 'UNIDAD', estado: true, categoria:0 }
+            product.value = {id: 0, nombre: '', descripcion: '', precio_venta_actual: "0", marca: '', unidad_medida: 'UNIDAD', estado: true, categoria:0 }
         } catch (error) {
             console.log("ERROR: ", error);
         }
