@@ -12,6 +12,9 @@ import Categoria from "../views/admin/inventario/Categoria.vue";
 import Producto from "../views/admin/inventario/Producto.vue";
 import Sucursal from "../views/admin/inventario/Sucursal.vue";
 import Almacen from "../views/admin/inventario/Almacen.vue";
+import Notas from "../views/admin/notas/Notas.vue";
+import Cliente from "../views/admin/notas/Cliente.vue";
+import NuevaNota from "../views/admin/notas/NuevaNota.vue";
 
 const routes = [
     {
@@ -55,6 +58,18 @@ const routes = [
                     { path: 'sucursal', component: Sucursal, meta: { requireAuth: true }, },
                     { path: 'almacen', component: Almacen, meta: { requireAuth: true }, },
                 ]
+            },
+            {
+                path: 'cliente',
+                component: Cliente
+            },
+            {
+                path: 'notas',
+                component: Notas
+            },
+            {
+                path: 'nota/nuevo',
+                component: NuevaNota
             }
         ]
     }

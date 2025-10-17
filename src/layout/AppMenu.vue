@@ -30,14 +30,19 @@ const model: any = ref([
         to: '/pages',
         items: [
             {
-                label: 'Compras',
-                icon: 'pi pi-fw pi-globe',
-                to: '/landing'
+                label: 'Clientes',
+                icon: 'pi pi-fw pi-users',
+                to: '/admin/cliente'
             },
             {
-                label: 'Ventas',
+                label: 'Compras y Ventas',
+                icon: 'pi pi-fw pi-globe',
+                to: '/admin/notas'
+            },
+            {
+                label: 'Nueva Nota',
                 icon: 'pi pi-fw pi-pencil',
-                to: '/pages/crud'
+                to: '/admin/nota/nuevo'
             }
         ]
     }
